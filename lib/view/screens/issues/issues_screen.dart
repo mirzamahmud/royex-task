@@ -8,6 +8,8 @@ import 'package:royex_task/core/helper/string_format_helper.dart';
 import 'package:royex_task/utils/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:royex_task/view/screens/issues/controller/issues_controller.dart';
+import 'package:royex_task/view/widgets/error/no_data_widget.dart';
+import 'package:royex_task/view/widgets/loader/data_loader_widget.dart';
 
 class IssuesScreen extends StatefulWidget {
   const IssuesScreen({super.key});
@@ -22,7 +24,8 @@ class _IssuesScreenState extends State<IssuesScreen> {
   @override
   void initState() {
     final controller = Get.find<IssuesController>();
-    controller.loadData();
+    controller.initialState();
+    scrollController.addListener(scrollListener);
     super.initState();
   }
 
@@ -30,6 +33,15 @@ class _IssuesScreenState extends State<IssuesScreen> {
   void dispose() {
     scrollController.dispose();
     super.dispose();
+  }
+
+  void scrollListener() {
+    final controller = Get.find<IssuesController>();
+    if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+      if (controller.hasNext()) {
+        controller.loadPaginationData();
+      }
+    }
   }
 
   @override
@@ -106,91 +118,101 @@ class _IssuesScreenState extends State<IssuesScreen> {
                 ),
               )
             ),
-            body: controller.isLoading ? const Center(
-              child: SpinKitCircle(
-                color: AppColors.colorMintLeaf,
-                size: 56,
-              ),
-            ) : SingleChildScrollView(
+            body: controller.isLoading ? const DataLoaderWidget()
+                : controller.issueList.isEmpty ? const NoDataWidget()
+                : SingleChildScrollView(
               controller: scrollController,
-              physics: const ScrollPhysics(),
+              physics: const  BouncingScrollPhysics(),
               padding: const EdgeInsetsDirectional.symmetric(vertical: 20, horizontal: 24),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: List.generate(controller.issueList.length, (index) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Container(
-                    width: Get.width,
-                    padding: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: AppColors.colorWhite,
-                      border: index == (controller.issueList.length - 1) ? null : Border(
-                        bottom: BorderSide(color: AppColors.colorGrey.withOpacity(0.3), width: 2)
-                      )
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate(controller.issueList.length, (index) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Container(
+                        width: Get.width,
+                        padding: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.colorWhite,
+                          border: index == (controller.issueList.length - 1) ? null : Border(
+                            bottom: BorderSide(color: AppColors.colorGrey.withOpacity(0.3), width: 2)
+                          )
+                        ),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Flexible(
-                              flex: 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    controller.issueList[index].title ?? "",
-                                    style: GoogleFonts.roboto(
-                                      color: AppColors.colorBlack,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600
-                                    ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  flex: 2,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                          Text(
+                                            controller.issueList[index].title ?? "",
+                                            style: GoogleFonts.roboto(
+                                                color: AppColors.colorBlack,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w600
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          HtmlWidget(
+                                            StringFormatHelper.htmlTagLimitNumberOfLines(controller.issueList[index].body),
+                                            textStyle: TextStyle(
+                                                color: AppColors.colorAsh.withOpacity(0.6),
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                                overflow: TextOverflow.ellipsis
+                                            ),
+                                          )
+                                        ],
                                   ),
-                                  const SizedBox(height: 4),
-                                  HtmlWidget(
-                                    StringFormatHelper.htmlTagLimitNumberOfLines(controller.issueList[index].body),
-                                    textStyle: TextStyle(
-                                      color: AppColors.colorAsh.withOpacity(0.6),
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                      overflow: TextOverflow.ellipsis
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    DateConverter.formattedDate(controller.issueList[index].createdAt ?? ""),
-                                    style: GoogleFonts.roboto(
-                                      color: AppColors.colorBlack,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    controller.issueList[index].user?.login ?? "",
-                                    style: GoogleFonts.roboto(
-                                      color: AppColors.colorAsh.withOpacity(0.6),
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12
-                                    ),
-                                  )
-                                ],
-                              ),
+                                ),
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                          Text(
+                                            DateConverter.formattedDate(controller.issueList[index].createdAt ?? ""),
+                                            style: GoogleFonts.roboto(
+                                                color: AppColors.colorBlack,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            controller.issueList[index].user?.login ?? "",
+                                            style: GoogleFonts.roboto(
+                                                color: AppColors.colorAsh.withOpacity(0.6),
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12
+                                            ),
+                                          )
+                                        ],
+                                 ),
+                                )
+                              ],
                             )
                           ],
                         )
-                      ],
-                    )
+                      ),
+                    ))
                   ),
-                ))
+                  controller.hasNext() ? const Padding(
+                    padding: EdgeInsetsDirectional.symmetric(vertical: 16),
+                    child: Center(
+                      child: SpinKitCircle(
+                        color: AppColors.colorMintLeaf,
+                        size: 56,
+                      ),
+                    ),
+                  ) : const SizedBox()
+                ],
               ),
             ),
           );

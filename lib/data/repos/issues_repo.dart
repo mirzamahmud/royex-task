@@ -7,8 +7,8 @@ class IssuesRepo{
   final ApiService apiService;
   IssuesRepo({required this.apiService});
 
-  Future<ApiResponseModel> getIssueList() async{
-    String url = "${ApiUrls.baseUrl}${ApiUrls.repositoryIssuesEndPoint}";
+  Future<ApiResponseModel> getIssueList({required int perPage, required int page}) async{
+    String url = "${ApiUrls.baseUrl}${ApiUrls.repositoryIssuesEndPoint}?per_page=$perPage&page=$page";
     print("-------------- request url: $url");
 
     ApiResponseModel responseModel = await apiService.requestToServer(

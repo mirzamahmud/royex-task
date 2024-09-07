@@ -10,19 +10,36 @@ class IssuesController extends GetxController{
   IssuesController({required this.repo});
 
   bool isLoading = false;
-
   List<IssuesModel> issueList = [];
+  int currentPage = 0;
+  int perPage = 20;
+  bool isPagination = false;
+  bool hasMoreData = true;
+
+  initialState() async{
+    isLoading = true;
+    currentPage = 0;
+    issueList.clear();
+    update();
+
+    await loadData();
+    isLoading = false;
+    update();
+  }
 
   Future<void> loadData() async{
-    isLoading = true;
-    update();
-    issueList.clear();
+    currentPage = currentPage + 1;
 
-    ApiResponseModel responseModel = await repo.getIssueList();
+    ApiResponseModel responseModel = await repo.getIssueList(perPage: perPage, page: currentPage);
     if(responseModel.statusCode == 200){
       List<dynamic> model = jsonDecode(responseModel.responseJson);
-      for(var item in model){
-        issueList.add(IssuesModel.fromJson(item));
+      if (model.isNotEmpty) {
+        issueList.addAll(model.map((item) => IssuesModel.fromJson(item)).toList());
+        hasMoreData = model.length == perPage;
+        update();
+      }else{
+        hasMoreData = false;
+        update();
       }
     } else if(responseModel.statusCode == 301){
 
@@ -34,7 +51,20 @@ class IssuesController extends GetxController{
 
     }
 
-    isLoading = false;
     update();
+  }
+
+  Future<void> loadPaginationData() async {
+    isPagination = true;
+    update();
+
+    await loadData();
+
+    isPagination = false;
+    update();
+  }
+
+  bool hasNext() {
+    return hasMoreData && !isPagination && !isLoading;
   }
 }

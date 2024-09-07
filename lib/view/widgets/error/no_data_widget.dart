@@ -15,7 +15,7 @@ class NoDataWidget extends StatelessWidget {
         children: [
           Image.asset(
             AppImages.noDataImage,
-            height: 32, width: 32,
+            height: 96, width: 96,
           ),
           const SizedBox(height: 12),
           Text(

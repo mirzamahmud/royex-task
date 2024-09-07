@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:royex_task/core/helper/date_converter.dart';
@@ -8,8 +7,11 @@ import 'package:royex_task/core/helper/string_format_helper.dart';
 import 'package:royex_task/utils/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:royex_task/view/screens/issues/controller/issues_controller.dart';
+import 'package:royex_task/view/screens/issues/inner_widget/issue_label_list.dart';
+import 'package:royex_task/view/widgets/app_bar/custom_app_bar.dart';
 import 'package:royex_task/view/widgets/error/no_data_widget.dart';
 import 'package:royex_task/view/widgets/loader/data_loader_widget.dart';
+import 'package:royex_task/view/widgets/loader/pagination_loader_widget.dart';
 
 class IssuesScreen extends StatefulWidget {
   const IssuesScreen({super.key});
@@ -54,75 +56,13 @@ class _IssuesScreenState extends State<IssuesScreen> {
             backgroundColor: AppColors.colorWhite,
             appBar: PreferredSize(
               preferredSize: Size(Get.width, 162),
-              child: Container(
-                width: Get.width, height: Get.height,
-                padding: const EdgeInsetsDirectional.only(start: 24, top: 40, bottom: 20, end: 24),
-                decoration: BoxDecoration(
-                  color: AppColors.colorWhite,
-                  boxShadow: [
-                    BoxShadow(color: AppColors.colorBlack.withOpacity(0.1), offset: const Offset(-1, -1), blurRadius: 15, spreadRadius: 2)
-                  ]
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        "Issues",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.roboto(
-                          color: AppColors.colorBlack,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Issues List",
-                          style: GoogleFonts.roboto(
-                            color: AppColors.colorBlack,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 24
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            prefixIcon: Transform.rotate(
-                              angle: pi / 2,
-                              child: const Icon(Icons.search, size: 28, color: AppColors.colorMintLeaf),
-                            ),
-                            contentPadding: const EdgeInsetsDirectional.symmetric(vertical: 8, horizontal: 16),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: AppColors.colorGrey, width: 1)
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: AppColors.colorGrey, width: 1)
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: AppColors.colorGrey, width: 1)
-                            )
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              )
+              child: const CustomAppBar()
             ),
-            body: controller.isLoading ? const DataLoaderWidget()
-                : controller.issueList.isEmpty ? const NoDataWidget()
-                : SingleChildScrollView(
+            body: controller.isLoading ? const DataLoaderWidget() : controller.issueList.isEmpty ? const NoDataWidget() : SingleChildScrollView(
               controller: scrollController,
-              physics: const  BouncingScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics()
+              ),
               padding: const EdgeInsetsDirectional.symmetric(vertical: 20, horizontal: 24),
               child: Column(
                 children: [
@@ -151,7 +91,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                          Text(
+                                      Text(
                                             controller.issueList[index].title ?? "",
                                             style: GoogleFonts.roboto(
                                                 color: AppColors.colorBlack,
@@ -159,8 +99,8 @@ class _IssuesScreenState extends State<IssuesScreen> {
                                                 fontWeight: FontWeight.w600
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
-                                          HtmlWidget(
+                                      const SizedBox(height: 4),
+                                      HtmlWidget(
                                             StringFormatHelper.htmlTagLimitNumberOfLines(controller.issueList[index].body),
                                             textStyle: TextStyle(
                                                 color: AppColors.colorAsh.withOpacity(0.6),
@@ -169,14 +109,14 @@ class _IssuesScreenState extends State<IssuesScreen> {
                                                 overflow: TextOverflow.ellipsis
                                             ),
                                           )
-                                        ],
+                                    ],
                                   ),
                                 ),
                                 Flexible(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                          Text(
+                                      Text(
                                             DateConverter.formattedDate(controller.issueList[index].createdAt ?? ""),
                                             style: GoogleFonts.roboto(
                                                 color: AppColors.colorBlack,
@@ -184,8 +124,8 @@ class _IssuesScreenState extends State<IssuesScreen> {
                                                 fontWeight: FontWeight.w600
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
-                                          Text(
+                                      const SizedBox(height: 4),
+                                      Text(
                                             controller.issueList[index].user?.login ?? "",
                                             style: GoogleFonts.roboto(
                                                 color: AppColors.colorAsh.withOpacity(0.6),
@@ -193,25 +133,19 @@ class _IssuesScreenState extends State<IssuesScreen> {
                                                 fontSize: 12
                                             ),
                                           )
-                                        ],
+                                    ],
                                  ),
                                 )
                               ],
-                            )
+                            ),
+                            const SizedBox(height: 8),
+                            IssueLabelList(labelList: controller.issueList[index].labels ?? []),
                           ],
                         )
                       ),
                     ))
                   ),
-                  controller.hasNext() ? const Padding(
-                    padding: EdgeInsetsDirectional.symmetric(vertical: 16),
-                    child: Center(
-                      child: SpinKitCircle(
-                        color: AppColors.colorMintLeaf,
-                        size: 56,
-                      ),
-                    ),
-                  ) : const SizedBox()
+                  controller.hasNext() ? const PaginationLoaderWidget() : const SizedBox()
                 ],
               ),
             ),

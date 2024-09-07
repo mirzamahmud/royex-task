@@ -36,10 +36,8 @@ class IssuesController extends GetxController{
       if (model.isNotEmpty) {
         issueList.addAll(model.map((item) => IssuesModel.fromJson(item)).toList());
         hasMoreData = model.length == perPage;
-        update();
       }else{
         hasMoreData = false;
-        update();
       }
     } else if(responseModel.statusCode == 301){
 

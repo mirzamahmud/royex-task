@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:royex_task/utils/app_colors.dart';
+import 'package:royex_task/utils/app_constant_text.dart';
 import 'package:royex_task/view/widgets/texts/heading_text.dart';
 import 'package:royex_task/view/widgets/texts/title_text.dart';
 
@@ -15,10 +15,10 @@ class CustomAppBar extends StatelessWidget {
       width: Get.width, height: Get.height,
       padding: const EdgeInsetsDirectional.only(start: 24, top: 40, bottom: 20, end: 24),
       decoration: BoxDecoration(
-          color: AppColors.colorWhite,
-          boxShadow: [
-            BoxShadow(color: AppColors.colorBlack.withOpacity(0.1), offset: const Offset(-1, -1), blurRadius: 15, spreadRadius: 2)
-          ]
+        color: AppColors.colorWhite,
+        boxShadow: [
+          BoxShadow(color: AppColors.colorBlack.withOpacity(0.1), offset: const Offset(-1, -1), blurRadius: 15, spreadRadius: 2)
+        ]
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,16 +26,15 @@ class CustomAppBar extends StatelessWidget {
           const Align(
             alignment: Alignment.topCenter,
             child: TitleText(
-              text: "Issues",
+              text: AppConstantText.issuesText,
             )
           ),
           const SizedBox(height: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const HeadingText(text: "Issues List"),
+              const HeadingText(text: AppConstantText.issuesListText),
               const SizedBox(height: 8),
-              // search field
               TextFormField(
                 decoration: InputDecoration(
                     prefixIcon: Transform.rotate(

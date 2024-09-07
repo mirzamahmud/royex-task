@@ -7,16 +7,17 @@ class IssuesRepo{
   final ApiService apiService;
   IssuesRepo({required this.apiService});
 
-  Future<ApiResponseModel> getIssueList({required int perPage, required int page}) async{
-    String url = "${ApiUrls.baseUrl}${ApiUrls.repositoryIssuesEndPoint}?per_page=$perPage&page=$page";
-    print("-------------- request url: $url");
+  /// ------- this method is used for fetching data from the server
+  Future<ApiResponseModel> getIssueList({required int perPage, required int page, List<String>? labels}) async{
+    /// Convert the list of labels to a comma-separated string
+    String labelsQuery = labels != null && labels.isNotEmpty ? labels.join(',') : "";
+
+    String url = "${ApiUrls.baseUrl}${ApiUrls.repositoryIssuesEndPoint}?per_page=$perPage&page=$page&labels=$labelsQuery";
 
     ApiResponseModel responseModel = await apiService.requestToServer(
       requestUrl: url,
       requestMethod: ApiRequestMethod.getRequest
     );
-    print("-------------- status code: ${responseModel.statusCode}");
-    print("-------------- response body: ${responseModel.responseJson}");
 
     return responseModel;
   }

@@ -53,7 +53,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
               preferredSize: Size(Get.width, 162),
               child: const CustomAppBar()
             ),
-            body: controller.isLoading ? const DataLoaderWidget() : controller.issueList.isEmpty ? const NoDataWidget() : SingleChildScrollView(
+            body: controller.isLoading || controller.isFilterLoading ? const DataLoaderWidget() : controller.issueList.isEmpty ? const NoDataWidget() : SingleChildScrollView(
               controller: scrollController,
               physics: const AlwaysScrollableScrollPhysics(
                 parent: BouncingScrollPhysics()

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:royex_task/core/helper/date_converter.dart';
 import 'package:royex_task/core/helper/string_format_helper.dart';
 import 'package:royex_task/data/models/issues_model.dart';
@@ -40,7 +40,7 @@ class IssueCard extends StatelessWidget {
                       Text(
                         issueList[index].title ?? "",
                         textAlign: TextAlign.left,
-                        style: GoogleFonts.roboto(
+                        style: const TextStyle(
                           color: AppColors.colorBlack,
                           fontSize: 18,
                           fontWeight: FontWeight.w600
@@ -66,7 +66,7 @@ class IssueCard extends StatelessWidget {
                       Text(
                         DateConverter.formattedDate(issueList[index].createdAt ?? ""),
                         textAlign: TextAlign.right,
-                        style: GoogleFonts.roboto(
+                        style: const TextStyle(
                           color: AppColors.colorBlack,
                           fontSize: 14,
                           fontWeight: FontWeight.w600
@@ -76,7 +76,7 @@ class IssueCard extends StatelessWidget {
                       Text(
                         issueList[index].user?.login ?? "",
                         textAlign: TextAlign.right,
-                        style: GoogleFonts.roboto(
+                        style: TextStyle(
                           color: AppColors.colorAsh.withOpacity(0.6),
                           fontWeight: FontWeight.w600,
                           fontSize: 12

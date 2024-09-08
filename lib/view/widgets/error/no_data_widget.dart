@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:royex_task/utils/app_colors.dart';
+import 'package:royex_task/utils/app_constant_text.dart';
 import 'package:royex_task/utils/app_images.dart';
 
 class NoDataWidget extends StatelessWidget {
@@ -18,9 +19,9 @@ class NoDataWidget extends StatelessWidget {
             height: 96, width: 96,
           ),
           const SizedBox(height: 12),
-          Text(
-            "No Data Found",
-            style: GoogleFonts.roboto(
+          const Text(
+            AppConstantText.noDataText,
+            style: TextStyle(
               color: AppColors.colorBlack,
               fontSize: 16,
               fontWeight: FontWeight.w500

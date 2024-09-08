@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:royex_task/core/helper/color_helper.dart';
 import 'package:royex_task/data/models/issues_model.dart';
 import 'package:royex_task/utils/app_colors.dart';
@@ -23,7 +23,7 @@ class IssueLabelList extends StatelessWidget {
         label: Text(
           labelList[index].name ?? "",
           textAlign: TextAlign.center,
-          style: GoogleFonts.roboto(
+          style: const TextStyle(
             color: AppColors.colorWhite,
             fontWeight: FontWeight.w500,
             fontSize: 12

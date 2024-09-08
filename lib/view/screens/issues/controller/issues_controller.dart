@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:royex_task/constants/api_service_constant/api_response_model.dart';
 import 'package:royex_task/data/models/issues_model.dart';
 import 'package:royex_task/data/repos/issues_repo.dart';
+import 'package:royex_task/utils/app_utils.dart';
 
 class IssuesController extends GetxController{
   final IssuesRepo repo;
@@ -59,13 +60,13 @@ class IssuesController extends GetxController{
         hasMoreData = false;
       }
     } else if(responseModel.statusCode == 301){
-
+      await initialState();
     } else if(responseModel.statusCode == 404){
-
+      AppUtils.errorMessage(title: "Error", msg: "Resource Not Found");
     } else if(responseModel.statusCode == 422){
-
+      AppUtils.errorMessage(title: "Error", msg: "Unprocessable Entity");
     }else{
-
+      AppUtils.errorMessage(title: "Error", msg: "Something Went Wrong");
     }
 
     update();
